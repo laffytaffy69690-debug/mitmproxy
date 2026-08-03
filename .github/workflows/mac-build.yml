@@ -11,10 +11,10 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.12'   # <-- use Python 3.12 or later
 
@@ -24,7 +24,7 @@ jobs:
           brew install openssl pkg-config || true
 
       - name: Cache pip
-        uses: actions/cache@v4
+        uses: actions/cache@v5.0.5
         with:
           path: |
             ~/.cache/pip
@@ -54,7 +54,7 @@ jobs:
           ls -lh dist || true
 
       - name: Upload macOS binary artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mitmproxy-macos
           path: dist/mitmproxy
