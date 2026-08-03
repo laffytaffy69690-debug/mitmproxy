@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15-intel # Forces an authentic Intel Mac cloud runner
 
     steps:
       - name: Checkout Code
@@ -17,13 +17,20 @@ jobs:
           python-version: "3.14"
 
       - name: Install Dependencies
-        # Removed the '-e' flag and explicitly added pyinstaller
         run: python -m pip install ".[dev]" pyinstaller
+
+      - name: Fix PyInstaller Lazy Imports
+        # This forces PyInstaller to bundle the missing display files
+        run: |
+          echo "import urwid.display.html_fragment" >> mitmproxy/tools/console/master.py
+          echo "import urwid.display.raw" >> mitmproxy/tools/console/master.py
+          echo "import urwid.display.curses" >> mitmproxy/tools/console/master.py
+          echo "import urwid.display.web" >> mitmproxy/tools/console/master.py
+          echo "import urwid.display.lcd" >> mitmproxy/tools/console/master.py
 
       - name: Compile Standalone Binaries
         env:
           MACOSX_DEPLOYMENT_TARGET: "12.0"
-          ARCHFLAGS: "-arch x86_64"
         run: python -u release/build.py standalone-binaries
 
       - name: Upload Standalone Artifact
