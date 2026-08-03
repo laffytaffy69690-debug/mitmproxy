@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: '3.12'   # <-- use Python 3.12 or later
 
       - name: Install Homebrew packages
         run: |
@@ -37,18 +37,17 @@ jobs:
           python -m pip install --upgrade pip setuptools wheel
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pyinstaller
-          # Install the package so its modules and entry points are available
+          # Install the package so entrypoints/modules are available
           pip install .
 
       - name: Build macOS binary with PyInstaller
         run: |
-          # Clean previous build artifacts
           rm -rf build dist || true
-          # Build one-file executable from the package entrypoint.
-          # Adjust the input path if the actual executable entrypoint differs.
+          # Adjust entrypoint if needed (e.g. mitmproxy, mitmdump, mitmweb)
           python -m PyInstaller --onefile --name mitmproxy mitmproxy/__main__.py
-          # Optionally build mitmdump or other entrypoints:
+          # Example additional targets (uncomment if needed):
           # python -m PyInstaller --onefile --name mitmdump mitmproxy/tools/mitmdump.py
+          # python -m PyInstaller --onefile --name mitmweb mitmproxy/tools/mitmweb.py
 
       - name: List built artifacts
         run: |
