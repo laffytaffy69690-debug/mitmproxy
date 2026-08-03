@@ -1,11 +1,11 @@
-name: Build Mitmproxy (macOS 12 x86_64)
+name: Build Mitmproxy Binary (macOS 12 x86_64)
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest # Uses the standard free Apple runner
+    runs-on: macos-latest
 
     steps:
       - name: Checkout Code
@@ -16,17 +16,19 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Build Tools
-        run: python -m pip install --upgrade pip build
+      - name: Install Development Dependencies
+        # Installs mitmproxy in dev mode along with the PyInstaller requirements
+        run: python -m pip install -e ".[dev]"
 
-      - name: Build Source and Wheel
+      - name: Compile Standalone Binaries
         env:
-          MACOSX_DEPLOYMENT_TARGET: "12.0" # Targets Monterey
-          ARCHFLAGS: "-arch x86_64" # Forces Intel architecture
-        run: python -m build
+          MACOSX_DEPLOYMENT_TARGET: "12.0"
+          ARCHFLAGS: "-arch x86_64"
+        # This is the official script that freezes the app into native binaries
+        run: python -u release/build.py standalone-binaries
 
-      - name: Upload Artifact
+      - name: Upload Standalone Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mitmproxy-macos12-wheel
-          path: dist/*.whl
+          name: mitmproxy-macos12-standalone-binary
+          path: release/dist/*.tar.gz
