@@ -1,11 +1,11 @@
-name: Build Mitmproxy (macOS 12 Compatible)
+name: Build Mitmproxy (macOS 12 x86_64)
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-13 # Standard x86_64 Intel Mac runner
+    runs-on: macos-latest # Uses the standard free Apple runner
 
     steps:
       - name: Checkout Code
@@ -21,7 +21,8 @@ jobs:
 
       - name: Build Source and Wheel
         env:
-          MACOSX_DEPLOYMENT_TARGET: "12.0"
+          MACOSX_DEPLOYMENT_TARGET: "12.0" # Targets Monterey
+          ARCHFLAGS: "-arch x86_64" # Forces Intel architecture
         run: python -m build
 
       - name: Upload Artifact
