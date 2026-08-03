@@ -16,8 +16,9 @@ jobs:
         with:
           python-version: "3.14"
 
-      - name: Install Development Dependencies
-        run: python -m pip install -e ".[dev]"
+      - name: Install Dependencies
+        # Removed the '-e' flag and explicitly added pyinstaller
+        run: python -m pip install ".[dev]" pyinstaller
 
       - name: Compile Standalone Binaries
         env:
